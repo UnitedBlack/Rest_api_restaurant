@@ -4,12 +4,12 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from database import get_db
 from services import service_menu as RestaurantService
-from dto import dto_menu as RestaurantDTO
+from dto import dto_restaurant as RestaurantDTO
 from uuid import UUID
 from models.models_restaurant import Menu
 
 router = APIRouter()
-database_service = RestaurantService.DbService(Menu)
+database_service = RestaurantService.DbService()
 
 
 @router.post("/menus", tags=["menu_getter"])
