@@ -1,4 +1,4 @@
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel
 
 
 class Menu(BaseModel):
@@ -6,9 +6,10 @@ class Menu(BaseModel):
     description: str
 
 
-
 class Submenu(BaseModel):
-    name: str
+    title: str
+    description: str
+    dishes_count: int
 
 
 class Dishes(BaseModel):

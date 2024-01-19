@@ -30,13 +30,15 @@ class Submenu(Base):
         index=True,
         nullable=False,
     )
-    name = Column(String, unique=True)
+    title = Column(String, unique=True)
+    description = Column(String, unique=True)
+    dishes_count = Column(Integer, nullable=False, index=True)
     menu_id = Column(UUID(as_uuid=True), ForeignKey("menus.id"))
     menu = relationship("Menu", back_populates="submenus")
-    dishes = relationship("Dish", back_populates="submenu")
+    dishes = relationship("Dishes", back_populates="submenu")
 
 
-class Dish(Base):
+class Dishes(Base):
     __tablename__ = "dishes"
 
     id = Column(
