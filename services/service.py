@@ -18,8 +18,11 @@ class DbService:
         menu_id: UUID = None,
         submenu_id: UUID = None,
     ):
-        table = self.model(**data.dict())
-        print(table)
+        data_dict = data.dict()
+        if "price" in data_dict:
+            data_dict["price"] = str(float(data_dict["price"]))
+            print(f"====================={data_dict}=====")
+        table = self.model(**data_dict)
         if id is not None:
             table.id = id
         if menu_id is not None:
@@ -33,6 +36,7 @@ class DbService:
         except IntegrityError as e:
             print(e)
             return False
+        # print(f"+++++++++++++++++++++++++++++++={table.price}{type(table.price)}")
         return table
 
     def get_value(self, db: Session, id: UUID = None):
@@ -51,16 +55,13 @@ class DbService:
             elif self.model == Submenu and result is not None:
                 dish_count = db.query(Dishes).filter(Dishes.submenu_id == id).count()
                 result.dish_count = dish_count
+            elif self.model == Dishes and result is not None:
+                result.price = str(float(result.price))
             return result
-        # try:
-        #     table = db.query(self.model).filter(self.model.id == id).first()
-        # except Exception as e:
-        #     print(e)
-        #     return False
-        # return table
 
     def get_all(self, db: Session, id: UUID = None):
-        return db.query(self.model).all()
+        all_values = db.query(self.model).all()
+        return all_values
 
     def update(
         self,

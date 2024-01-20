@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import Union
 
 class Menu(BaseModel):
     title: str
@@ -14,4 +14,4 @@ class Submenu(BaseModel):
 class Dishes(BaseModel):
     title: str
     description: str
-    price: float
+    price: Union[float, str]

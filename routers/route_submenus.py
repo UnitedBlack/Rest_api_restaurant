@@ -35,7 +35,8 @@ async def get_value_submenu(submenu_id: UUID, db: Session = Depends(get_db)):
 
 @router.get("/{menu_id}/submenus", tags=["all_submenus"])
 async def get_all_submenus(menu_id: UUID, db: Session = Depends(get_db)):
-    return database_service.get_all(db, menu_id)
+    all_values = database_service.get_all(db, menu_id)
+    return all_values
 
 
 @router.patch("/{menu_id}/submenus/{submenu_id}", tags=["change_submenu_data"])

@@ -22,6 +22,7 @@ async def create_dishes(
     if not dishes_creation:
         return Response(content="Failed to create menu", status_code=400)
     json_compatible_item_data = jsonable_encoder(dishes_creation)
+    json_compatible_item_data["price"] = str(json_compatible_item_data["price"])
     return JSONResponse(content=json_compatible_item_data, status_code=201)
 
 
@@ -34,7 +35,7 @@ async def get_value_dishes(
 ):
     specified_dishes = database_service.get_value(db, dish_id)
     if not specified_dishes:
-        return JSONResponse(content={"detail": "dishes not found"}, status_code=404)
+        return JSONResponse(content={"detail": "dish not found"}, status_code=404)
     return specified_dishes
 
 
@@ -56,6 +57,7 @@ async def change_dishes_data(
 ):
     update_dishes = database_service.update(db, data, dish_id)
     json_compatible_item_data = jsonable_encoder(update_dishes)
+    json_compatible_item_data["price"] = str(json_compatible_item_data["price"])
     return JSONResponse(content=json_compatible_item_data, status_code=200)
 
 
