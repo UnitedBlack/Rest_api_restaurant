@@ -1,24 +1,24 @@
 version: '3.8'
 
 services:
- db:
-    image: postgres
-    restart: always
-    user: postgres
-    environment:
-      POSTGRES_PASSWORD: DishDB
-      POSTGRES_DB: cafe_db
-      POSTGRES_INITDB_ARGS: "-c client_min_messages=warning"
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
- app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    command: python main.py
+ web:
+    build: .
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
     volumes:
       - .:/app
     ports:
       - 8000:8000
     depends_on:
       - db
+
+ db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: cafe_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: DishDB
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+ postgres_data:

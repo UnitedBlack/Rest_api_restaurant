@@ -1,7 +1,7 @@
 from models.models_restaurant import Menu, Submenu, Dishes
 from sqlalchemy.orm import Session
-from dto import dto_restaurant
 from uuid import UUID
+from typing import Union
 
 from sqlalchemy.exc import IntegrityError
 
@@ -13,7 +13,7 @@ class DbService:
     def create(
         self,
         db: Session,
-        data: Menu | Submenu | Dishes,
+        data: Union[Menu, Submenu, Dishes],
         id: UUID = None,
         menu_id: UUID = None,
         submenu_id: UUID = None,
@@ -21,7 +21,6 @@ class DbService:
         data_dict = data.dict()
         if "price" in data_dict:
             data_dict["price"] = str(float(data_dict["price"]))
-            print(f"====================={data_dict}=====")
         table = self.model(**data_dict)
         if id is not None:
             table.id = id
@@ -36,25 +35,24 @@ class DbService:
         except IntegrityError as e:
             print(e)
             return False
-        # print(f"+++++++++++++++++++++++++++++++={table.price}{type(table.price)}")
         return table
 
     def get_value(self, db: Session, id: UUID = None):
         if id:
             result = db.query(self.model).filter(self.model.id == id).first()
             if self.model == Menu and result is not None:
-                submenu_count = db.query(Submenu).filter(Submenu.menu_id == id).count()
-                dish_count = (
+                submenus_count = db.query(Submenu).filter(Submenu.menu_id == id).count()
+                dishes_count = (
                     db.query(Dishes)
                     .join(Submenu, Dishes.submenu_id == Submenu.id)
                     .filter(Submenu.menu_id == id)
                     .count()
                 )
-                result.submenu_count = submenu_count
-                result.dish_count = dish_count
+                result.submenus_count = submenus_count
+                result.dishes_count = dishes_count
             elif self.model == Submenu and result is not None:
-                dish_count = db.query(Dishes).filter(Dishes.submenu_id == id).count()
-                result.dish_count = dish_count
+                dishes_count = db.query(Dishes).filter(Dishes.submenu_id == id).count()
+                result.dishes_count = dishes_count
             elif self.model == Dishes and result is not None:
                 result.price = str(float(result.price))
             return result
@@ -66,7 +64,7 @@ class DbService:
     def update(
         self,
         db: Session,
-        data: Menu | Submenu | Dishes,
+        data: Union[Menu, Submenu, Dishes],
         id: UUID = None,
     ):
         table = db.query(self.model).filter(self.model.id == id).first()
