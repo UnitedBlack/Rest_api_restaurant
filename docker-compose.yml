@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
- web:
+ fastapi:
     build: .
     command: uvicorn main:app --host 0.0.0.0 --port 8000
     volumes:
@@ -14,9 +14,9 @@ services:
  db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: cafe_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: DishDB
+      POSTGRES_DB: menus
+      POSTGRES_USER: restaurant_admin
+      POSTGRES_PASSWORD: restaurant_password
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
