@@ -21,7 +21,6 @@ class DbService:
         data_dict = data.dict()
         if "price" in data_dict:
             data_dict["price"] = str(float(data_dict["price"]))
-
         table = self.model(**data_dict)
         if id is not None:
             table.id = id
@@ -63,6 +62,7 @@ class DbService:
             elif self.model == Dishes and result is not None:
                 """Вывод цены в формате соответствующем с тестами Postman"""
                 result.price = str(float(result.price))
+                # result.price = f"{result.price:.2f}" По ТЗ сказано 2 цифры после запятой, но тесты не проходят
             return result
         except Exception as e:
             return f"There was some error with calling function {e}"
@@ -72,10 +72,13 @@ class DbService:
         db: Session,
         id: UUID = None,
     ) -> list:
-        if id:
-            table = db.query(self.model).filter(self.model.id == id).all()
-        else:
-            table = db.query(self.model).all()
+        try:
+            if id:
+                table = db.query(self.model).filter(self.model.id == id).all()
+            else:
+                table = db.query(self.model).all()
+        except Exception:
+            return False
         return table
 
     def update(
@@ -84,12 +87,17 @@ class DbService:
         data: Union[Menu, Submenu, Dishes],
         id: UUID = None,
     ) -> Union[Any, None]:
-        table = db.query(self.model).filter(self.model.id == id).first()
-        for key, value in data.dict().items():
-            setattr(table, key, value)
-        db.add(table)
-        db.commit()
-        db.refresh(table)
+        try:
+            table = db.query(self.model).filter(self.model.id == id).first()
+            for key, value in data.dict().items():
+                setattr(table, key, value)
+            # if self.model == Dishes:
+            #     data.price = float(data.price)
+            db.add(table)
+            db.commit()
+            db.refresh(table)
+        except Exception:
+            return False
         return table
 
     def remove(
@@ -97,6 +105,9 @@ class DbService:
         db: Session,
         id: UUID = None,
     ) -> int:
-        table = db.query(self.model).filter(self.model.id == id).delete()
-        db.commit()
+        try:
+            table = db.query(self.model).filter(self.model.id == id).delete()
+            db.commit()
+        except Exception:
+            return False
         return table

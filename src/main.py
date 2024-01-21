@@ -1,9 +1,9 @@
 import uvicorn
 from fastapi import FastAPI
 from database import engine, Base
-from routers import route_menus as MenuRouter
-from routers import route_submenus as SubmenuRouter
-from routers import route_dishes as DishesRouter
+from routers import router_menus as MenuRouter
+from routers import router_submenus as SubmenuRouter
+from routers import router_dishes as DishesRouter
 
 Base.metadata.create_all(bind=engine)
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, ForeignKey
+from sqlalchemy import Column, String, DECIMAL, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 from sqlalchemy.dialects.postgresql import UUID
@@ -49,7 +49,7 @@ class Dishes(Base):
     )
     title = Column(String, unique=True)
     description = Column(String)
-    price = Column(Float)
+    price = Column(DECIMAL(precision=10, scale=2))
     submenu_id = Column(
         UUID(as_uuid=True), ForeignKey("submenus.id", ondelete="CASCADE")
     )
