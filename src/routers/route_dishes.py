@@ -4,9 +4,8 @@ from .route_menus import Session, get_db
 from .route_menus import RestaurantService, RestaurantDTO
 from .route_menus import UUID
 from models.models_restaurant import Dishes
-from .route_menus import router
 
-# router = APIRouter()1
+router = APIRouter()
 database_service = RestaurantService.DbService(Dishes)
 
 
@@ -47,11 +46,10 @@ async def get_value_dishes(
 
 @router.get("/{menu_id}/submenus/{submenu_id}/dishes", tags=["Read all"])
 async def get_all_dishes(
-    submenu_id: UUID,
     db_session: Session = Depends(get_db),
 ) -> JSONResponse:
     try:
-        all_values = database_service.get_all(db=db_session, id=submenu_id)
+        all_values = database_service.get_all(db=db_session)
     except Exception as e:
         return JSONResponse(content={"detail": str(e)}, status_code=500)
     return JSONResponse(content=jsonable_encoder(all_values))
@@ -60,11 +58,11 @@ async def get_all_dishes(
 @router.patch("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}", tags=["Update"])
 async def change_dishes_data(
     dish_id: UUID,
-    data: RestaurantDTO.Dishes,
-    db: Session = Depends(get_db),
+    data_dishes: RestaurantDTO.Dishes,
+    db_session: Session = Depends(get_db),
 ) -> JSONResponse:
     try:
-        update_result = database_service.update(db=db, data=data, id=dish_id)
+        update_result = database_service.update(db=db_session, data=data_dishes, id=dish_id)
         json_compatible_item_data = jsonable_encoder(update_result)
         json_compatible_item_data["price"] = str(json_compatible_item_data["price"])
     except Exception as e:
@@ -73,7 +71,7 @@ async def change_dishes_data(
 
 
 @router.delete("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}", tags=["Delete"])
-async def delete(
+async def delete_dish(
     dish_id: UUID,
     db_session: Session = Depends(get_db),
 ) -> JSONResponse:

@@ -21,7 +21,7 @@ class DbService:
         data_dict = data.dict()
         if "price" in data_dict:
             data_dict["price"] = str(float(data_dict["price"]))
-            
+
         table = self.model(**data_dict)
         if id is not None:
             table.id = id
@@ -29,7 +29,7 @@ class DbService:
             table.menu_id = menu_id
         if submenu_id is not None:
             table.submenu_id = submenu_id
-            
+
         try:
             db.add(table)
             db.commit()
@@ -72,7 +72,10 @@ class DbService:
         db: Session,
         id: UUID = None,
     ) -> list:
-        table = db.query(self.model).filter(self.model.id == id).all()
+        if id:
+            table = db.query(self.model).filter(self.model.id == id).all()
+        else:
+            table = db.query(self.model).all()
         return table
 
     def update(
