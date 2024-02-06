@@ -7,7 +7,7 @@ import uuid
 
 class Menu(Base):
     __tablename__ = "menus"
-
+    
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
