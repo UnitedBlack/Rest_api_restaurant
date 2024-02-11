@@ -7,7 +7,7 @@ from services import service as RestaurantService
 from dto import dto_restaurant as RestaurantDTO
 from uuid import UUID
 from models.models_restaurant import Menu
-from database import metadata
+
 router = APIRouter()
 database_service = RestaurantService.DbService(Menu)
 
@@ -19,7 +19,6 @@ async def create_menu(
 ) -> JSONResponse:
     try:
         create_menu_result = database_service.create(db=db_session, data=data_menu)
-        print(f"METADATA: {metadata.tables}")
         if not create_menu_result:
             return Response(content="Failed to create menu", status_code=400)
         json_compatible_item_data = jsonable_encoder(create_menu_result)

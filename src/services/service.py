@@ -18,7 +18,7 @@ class DbService:
         menu_id: UUID = None,
         submenu_id: UUID = None,
     ) -> Union[Literal[False], Any]:
-        data_dict = data.dict()
+        data_dict = data.model_dump()
         if "price" in data_dict:
             data_dict["price"] = str(float(data_dict["price"]))
         table = self.model(**data_dict)
@@ -89,7 +89,7 @@ class DbService:
     ) -> Union[Any, None]:
         try:
             table = db.query(self.model).filter(self.model.id == id).first()
-            for key, value in data.dict().items():
+            for key, value in data.model_dump().items():
                 setattr(table, key, value)
             # if self.model == Dishes:
             #     data.price = float(data.price)
