@@ -46,10 +46,9 @@ def dish_details():
 @pytest.fixture()
 def dish_update_details():
     return {
-        "id": None,
-        "menu_id": None,
-        "title": "My updated submenu 1",
-        "description": "My updated submenu description 1",
+        "title": "My updated dish 1",
+        "description": "My updated dish description 1",
+        "price": "14.50",
     }
 
 
@@ -89,29 +88,30 @@ class TestDish:
         assert response_json["description"] == dish_params["description"]
         assert response_json["price"] == dish_params["price"]
 
-    # @classmethod
-    # def test_dish_get_all(cls, dish_details, get_menu_id):
-    #     response = client.get(url=f"api/v1/menus/{get_menu_id}/submenus")
-    #     response_json = response.json()
-    #     assert response.status_code == 200
-    #     assert len(response_json) >= 1
-    #     assert "id" in response_json[0]
-    #     assert response_json[0]["title"] == dish_details["title"]
-    #     assert response_json[0]["description"] == dish_details["description"]
+    @classmethod
+    def test_dish_get_all(cls, get_menu_id, get_submenu_id):
+        response = client.get(
+            url=f"api/v1/menus/{get_menu_id}/submenus/{get_submenu_id}/dishes"
+        )
+        response_json = response.json()
+        assert response.status_code == 200
+        assert len(response_json) >= 1
 
-    # @classmethod
-    # def test_dish_update(cls, dish_update_details, get_menu_id):
-    #     response = client.patch(
-    #         url=f"api/v1/menus/{get_menu_id}/submenus/{cls.id}",
-    #         json=dish_update_details,
-    #     )
-    #     response_json = response.json()
-    #     assert response.status_code == 200
-    #     assert "id" in response_json
-    #     assert response_json["title"] == dish_update_details["title"]
-    #     assert response_json["description"] == dish_update_details["description"]
+    @classmethod
+    def test_dish_update(cls, dish_update_details, get_menu_id, get_submenu_id):
+        response = client.patch(
+            url=f"api/v1/menus/{get_menu_id}/submenus/{get_submenu_id}/dishes/{cls.id}",
+            json=dish_update_details,
+        )
+        response_json = response.json()
+        assert response.status_code == 200
+        assert "id" in response_json
+        assert response_json["title"] == dish_update_details["title"]
+        assert response_json["description"] == dish_update_details["description"]
 
-    # @classmethod
-    # def test_dish_delete(cls, get_menu_id):
-    #     response = client.delete(url=f"api/v1/menus/{get_menu_id}/submenus/{cls.id}")
-    #     assert response.status_code == 200
+    @classmethod
+    def test_dish_delete(cls, get_menu_id, get_submenu_id):
+        response = client.delete(
+            url=f"api/v1/menus/{get_menu_id}/submenus/{get_submenu_id}/dishes/{cls.id}"
+        )
+        assert response.status_code == 200
